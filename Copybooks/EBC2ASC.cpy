@@ -1,4 +1,4 @@
-      *========================= ASC2EBC.cpy ==========================*
+      *========================= EBC2ASC.cpy ==========================*
       * Authors: Brian D Pead
       *
       * License: MIT
@@ -8,37 +8,37 @@
       * 2020-02-08  1.0      First release
       *================================================================*
 
-       01  W-ASCII-TO-EBCDIC-TABLE.
+       01  W-EBCDIC-TO-ASCII-TABLE.
            05  FILLER-00-0F        PIC X(32)       VALUE
-               '00010203372D2E2F1605250B0C0D0E0F'.
+               '00010203EC09CA7FE2D2D30B0C0D0E0F'.
            05  FILLER-10-1F        PIC X(32)       VALUE
-               '101112133C3D322618193F271C1D1E1F'.
+               '10111213EFC508CB1819DCD81C1D1E1F'.
            05  FILLER-20-2F        PIC X(32)       VALUE
-               '405A7F7B5B6C507D4D5D5C4E6B604B61'.
+               'B7B8B9BBC40A171BCCCDCFD0D1050607'.
            05  FILLER-30-3F        PIC X(32)       VALUE
-               'F0F1F2F3F4F5F6F7F8F97A5E4C7E6E6F'.
+               'D9DA16DDDEDFE004E3E5E9EB14159E1A'.
            05  FILLER-40-4F        PIC X(32)       VALUE
-               '7CC1C2C3C4C5C6C7C8C9D1D2D3D4D5D6'.
+               '20C9838485A0F28687A4D52E3C282BB3'.
            05  FILLER-50-5F        PIC X(32)       VALUE
-      *                               [   ]
-               'D7D8D9E2E3E4E5E6E7E8E9BAE0BB5F6D'.
+               '268288898AA18C8B8DE121242A293B5E'.
            05  FILLER-60-6F        PIC X(32)       VALUE
-               '79818283848586878889919293949596'.
+               '2D2FB28EB4B5B68F80A57C2C255F3E3F'.
            05  FILLER-70-7F        PIC X(32)       VALUE
-               '979899A2A3A4A5A6A7A8A9C06AD0A107'.
+               'BA90BCBDBEF3C0C1C2603A2340273D22'.
            05  FILLER-80-8F        PIC X(32)       VALUE
-               '68DC5142434447485253545756586367'.
+               'C3616263646566676869AEAFC6C7C8F1'.
            05  FILLER-90-9F        PIC X(32)       VALUE
-               '719C9ECBCCCDDBDDDFECFCB0B1B23EB4'.
+               'F86A6B6C6D6E6F707172A6A791CE92A9'.
            05  FILLER-A0-AF        PIC X(32)       VALUE
-               '4555CEDE49699A9BAB0FBAB8B7AA8A8B'.
+               'E67E737475767778797AADA8D45BD6D7'.
            05  FILLER-B0-BF        PIC X(32)       VALUE
-               '3C3D624F6465662021227023727374BE'.
+      *                             [ ]
+               '9B9C9DFA9FB1B0ACABFC5B5DE45DBFE7'.
            05  FILLER-C0-CF        PIC X(32)       VALUE
-               '7677788024158C8D8E41061728299D2A'.
+               '7B414243444546474849E8939495A2ED'.
            05  FILLER-D0-DF        PIC X(32)       VALUE
-               '2B2C090AAC4AAEAF1B3031FA1A333435'.
+               '7D4A4B4C4D4E4F505152EE968197A398'.
            05  FILLER-E0-EF        PIC X(32)       VALUE
-               '36590838BC39A0BFCA3AFE3B04CFDA14'.
+               '5CF0535455565758595AFDF599F7F6F9'.
            05  FILLER-F0-FF        PIC X(32)       VALUE
-               'E18F4675FDEBEEED90EFB3FBB9EABBFF'.
+               '30313233343536373839DBFB9AF4EAFF'.
