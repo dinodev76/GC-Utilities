@@ -1,0 +1,104 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+
+    //*================================================================*
+    //* Authors: Brian D Pead
+    //*
+    //* License: MIT
+    //*
+    //* Date        Version  Description
+    //* ----        -------  -----------
+    //* 2020-02-08  1.0      First release
+    //*================================================================*
+
+    "version": "2.0.0",
+    "options":
+    {
+        "env": 
+        {
+            "COB_CONFIG_DIR":    "C:\\GnuCOBOL\\share\\gnucobol\\config",
+            "COB_COPY_DIR":      "C:\\GnuCOBOL\\share\\gnucobol\\copy",
+            "COB_LIBRARY_PATH":  "${workspaceFolder}\\Bin",
+            "COB_VARSEQ_FORMAT": "0",
+            "MINGW_ROOT_PATH":   "C:\\GnuCOBOL\\",
+            "PATH":              "C:\\GnuCOBOL\\bin"
+        }
+    },
+    "tasks":
+    [
+        {
+            "label": "Compile Selected Subroutine",
+            "type": "process",
+            "command": "C:\\GnuCOBOL\\bin\\cobc.exe",
+            "args":
+            [
+                "-m",
+                "-o",
+                "${workspaceFolder}\\Bin\\${fileBasenameNoExtension}.dll",
+                "${fileBasenameNoExtension}.cob",
+                "-I${workspaceFolder}\\CopyBooks",
+                "-std=ibm",
+                "-T",
+                "${workspaceFolder}\\Listings\\${fileBasenameNoExtension}.lst",
+                "--tsymbols",
+                "-v",
+                "-debug"
+            ],
+            "problemMatcher": "$gnucobol-cobc",
+            "group":
+            {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Compile Selected Main Program",
+            "type": "process",
+            "command": "C:\\GnuCOBOL\\bin\\cobc.exe",
+            "args":
+            [
+                "-x",
+                "-o",
+                "${workspaceFolder}\\Bin\\${fileBasenameNoExtension}.exe",
+                "${fileBasenameNoExtension}.cob",
+                "-I${workspaceFolder}\\CopyBooks",
+                "-std=ibm",
+                "-T",
+                "${workspaceFolder}\\Listings\\${fileBasenameNoExtension}.lst",
+                "--tsymbols",
+                "-v",
+                "-debug"
+            ],
+            "problemMatcher": "$gnucobol-cobc",
+            "group":
+            {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Compile and Run Selected Main Program",
+            "type": "process",
+            "command": "${workspaceFolder}\\Bin\\${fileBasenameNoExtension}.exe",
+            "dependsOn":
+            [
+                "Compile Selected Main Program"
+            ],
+            "problemMatcher": "$gnucobol-cobc"
+        },
+        {
+            "label": "Run Selected Main Program",
+            "type": "process",
+            "command": "${workspaceFolder}\\Bin\\${fileBasenameNoExtension}.exe",
+            "problemMatcher": "$gnucobol-cobc"
+        },
+        {
+            "label": "Run SET to see environment variables",
+            "type": "shell",
+            "command": "set",
+            "args": [],
+            "problemMatcher": "$gnucobol-cobc"
+        },
+    ]
+}
