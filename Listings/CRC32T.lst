@@ -1,0 +1,342 @@
+GnuCOBOL 3.0-rc1.0      CRC32T.cob                                                    Sun Feb 09 10:37:12 2020  Page 0001
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000001        *============================ CRC32T ============================*
+000002        * Authors: Brian D Pead
+000003        *
+000004        * Description: Program to test subroutine CRC32.
+000005        *
+000006        * License: MIT
+000007        *
+000008        * Date        Version  Description
+000009        * ----        -------  -----------
+000010        * 2020-02-08  1.0      First release
+000011        *================================================================*
+000012
+000013         PROCESS TRUNC(BIN)
+000014
+warning: PROCESS statement ignored
+000015         IDENTIFICATION DIVISION.
+000016        *========================
+000017
+000018         PROGRAM-ID.                 CRC32T.
+000019
+000020         ENVIRONMENT DIVISION.
+000021        *=====================
+000022
+000023         CONFIGURATION SECTION.
+000024        *----------------------
+000025
+000026         SOURCE-COMPUTER.
+000027             IBM-Z15.
+000028        *    IBM-Z15 DEBUGGING MODE.
+000029
+000030         INPUT-OUTPUT SECTION.
+000031        *---------------------
+000032
+000033         FILE-CONTROL.
+GnuCOBOL 3.0-rc1.0      CRC32T.cob                                                    Sun Feb 09 10:37:12 2020  Page 0002
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000034        /
+000035         DATA DIVISION.
+000036        *==============
+000037
+000038         FILE SECTION.
+000039        *-------------
+000040
+GnuCOBOL 3.0-rc1.0      CRC32T.cob                                                    Sun Feb 09 10:37:12 2020  Page 0003
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000041        /
+000042         WORKING-STORAGE SECTION.
+000043        *------------------------
+000044
+000045         01  W-CRC32-PROG            PIC X(08)       VALUE 'CRC32'.
+000046         01  W-HEXDUMP-PROG          PIC X(08)       VALUE 'HEXDUMP'.
+000047         01  W-HEX                   PIC X(08).
+000048
+000049         01  W-BUFFER                                VALUE
+000050             'The quick brown fox jumps over the lazy dog'.
+000051             05  W-BUFFER-1          PIC X(20).
+000052             05  W-BUFFER-2          PIC X(20).
+000053             05  W-BUFFER-3          PIC X(03).
+000054
+000055         01  W-COMPILED-DATE.
+000056             05  W-COMPILED-DATE-YYYY
+000057                                     PIC X(04).
+000058             05  W-COMPILED-DATE-MM  PIC X(02).
+000059             05  W-COMPILED-DATE-DD  PIC X(02).
+000060             05  W-COMPILED-TIME-HH  PIC X(02).
+000061             05  W-COMPILED-TIME-MM  PIC X(02).
+000062             05  W-COMPILED-TIME-SS  PIC X(02).
+000063             05  FILLER              PIC X(07).
+000064
+000065         01  W-CRC32-PARAMETER.      COPY CRC32L.
+000001C       *========================== CRC32L.cpy ==========================*
+000002C       * Authors: Brian D Pead
+000003C       *
+000004C       * Description: Linkage parameter for subroutine CRC32 which
+000005C       *              calculates a CRC-32 checksum.
+000006C       *
+000007C       * License: MIT
+000008C       *
+000009C       * Date        Version  Description
+000010C       * ----        -------  -----------
+000011C       * 2020-02-08  1.0      First release
+000012C       *================================================================*
+000013C
+000014C       *01  CRC32-PATRAMETER.
+000015C
+000016C       **** Input fields:
+000017C       ****     CRC-STAGE:
+000018C       ****         Stage of the checksum process - use values other than
+000019C       ****         'SE' when data to checksum is passed in chunks.
+000020C       ****     CRC-BUFFER:
+000021C       ****         Pointer to buffer on which to calculate checksum.
+000022C       ****     CRC-BUFFER-LEN:
+000023C       ****         Length of buffer.
+000024C
+000025C       **** Output field:
+000026C       ****     CRC-CHECKSUM:
+000027C       ****         Calculated checksum (partial result if processing in
+GnuCOBOL 3.0-rc1.0      CRC32T.cob                                                    Sun Feb 09 10:37:12 2020  Page 0004
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000028C       ****         chunks).
+000029C
+000030C            05  CRC-STAGE           PIC X(02)       VALUE 'SE'.
+000031C                88  CRC-STAGE-START-END             VALUE 'SE'.
+000032C                88  CRC-STAGE-START                 VALUE 'ST'.
+000033C                88  CRC-STAGE-IN-PROCESS            VALUE 'IP'.
+000034C                88  CRC-STAGE-END                   VALUE 'EN'.
+000035C
+000036C            05  CRC-BUFFER-PTR                      POINTER.
+000037C
+000038C            05  CRC-BUFFER-LEN      PIC 9(09)  COMP.
+000039C
+000040C            05  CRC-CHECKSUM        PIC 9(09)  COMP.
+warning: line not terminated by a newline
+000066
+000067         01  W-HEXDUMP-PARAMETER.    COPY HEXDUMPL.
+000001C       *========================= HEXDUMPL.cpy =========================*
+000002C       * Authors: Brian D Pead
+000003C       *
+000004C       * Description: Linkage parameter for subroutine HEXDUMP which
+000005C       *              convert input buffer to hex output.
+000006C       *
+000007C       * License: MIT
+000008C       *
+000009C       * Date        Version  Description
+000010C       * ----        -------  -----------
+000011C       * 2020-02-08  1.0      First release
+000012C       *================================================================*
+000013C
+000014C       *01  HEXDUMP-PARAMETER.
+000015C
+000016C       **** Input fields:
+000017C       ****     HD-INPUT-PTR:
+000018C       ****         Pointer to input.
+000019C       ****     HD-INPUT-LEN:
+000020C       ****         Length of input.
+000021C       ****     HD-OUTPUT-PTR:
+000022C       ****         Pointer to output (area must be twice the length of
+000023C       ****         the input).
+000024C
+000025C       **** Output field:
+000026C       ****     The area pointed to by HD-OUTPUT-PTR.
+000027C
+000028C            05  HD-INPUT-PTR                        POINTER.
+000029C
+000030C            05  HD-INPUT-LEN        PIC 9(09)  COMP.
+000031C
+000032C            05  HD-OUTPUT-PTR                       POINTER.
+GnuCOBOL 3.0-rc1.0      CRC32T.cob                                                    Sun Feb 09 10:37:12 2020  Page 0005
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000068        /
+000069         PROCEDURE DIVISION.
+000070        *===================
+000071
+000072         MAIN.
+000073        *-----
+000074
+000075             PERFORM SUB-1000-START-UP THRU SUB-1000-EXIT
+000076
+000077             PERFORM SUB-2000-PROCESS THRU SUB-2000-EXIT
+000078
+000079             PERFORM SUB-3000-SHUT-DOWN THRU SUB-3000-EXIT
+000080             .
+000081         MAIN-EXIT.
+000082             STOP RUN.
+GnuCOBOL 3.0-rc1.0      CRC32T.cob                                                    Sun Feb 09 10:37:12 2020  Page 0006
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000083        /
+000084         SUB-1000-START-UP.
+000085        *------------------
+000086
+000087             MOVE FUNCTION WHEN-COMPILED
+000088                                     TO W-COMPILED-DATE
+000089
+000090             DISPLAY 'CRC32T   compiled on '
+000091                 W-COMPILED-DATE-YYYY '/'
+000092                 W-COMPILED-DATE-MM   '/'
+000093                 W-COMPILED-DATE-DD   ' at '
+000094                 W-COMPILED-TIME-HH   ':'
+000095                 W-COMPILED-TIME-MM   ':'
+000096                 W-COMPILED-TIME-SS
+000097             .
+000098         SUB-1000-EXIT.
+000099             EXIT.
+GnuCOBOL 3.0-rc1.0      CRC32T.cob                                                    Sun Feb 09 10:37:12 2020  Page 0007
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000100        /
+000101         SUB-2000-PROCESS.
+000102        *-----------------
+000103
+000104        **** CALCULATE CHECKSUM OF ENTIRE TEXT IN 1 CALL:
+000105
+000106             SET  CRC-STAGE-START-END
+000107                                     TO TRUE
+000108             SET  CRC-BUFFER-PTR     TO ADDRESS OF W-BUFFER
+000109             MOVE LENGTH OF W-BUFFER TO CRC-BUFFER-LEN
+000110
+000111             PERFORM SUB-9100-CALL-CRC32 THRU SUB-9100-EXIT
+000112
+000113             PERFORM SUB-9200-DISPLAY-HEX THRU SUB-9200-EXIT
+000114
+000115        **** CALCULATE CHECKSUM OF TEXT IN 3 CHUNKS:
+000116
+000117             SET  CRC-STAGE-START    TO TRUE
+000118             SET  CRC-BUFFER-PTR     TO ADDRESS OF W-BUFFER-1
+000119             MOVE LENGTH OF W-BUFFER-1
+000120                                     TO CRC-BUFFER-LEN
+000121
+000122             PERFORM SUB-9100-CALL-CRC32 THRU SUB-9100-EXIT
+000123
+000124             SET  CRC-STAGE-IN-PROCESS
+000125                                     TO TRUE
+000126             SET  CRC-BUFFER-PTR     TO ADDRESS OF W-BUFFER-2
+000127             MOVE LENGTH OF W-BUFFER-2
+000128                                     TO CRC-BUFFER-LEN
+000129
+000130             PERFORM SUB-9100-CALL-CRC32 THRU SUB-9100-EXIT
+000131
+000132             SET  CRC-STAGE-END      TO TRUE
+000133             SET  CRC-BUFFER-PTR     TO ADDRESS OF W-BUFFER-3
+000134             MOVE LENGTH OF W-BUFFER-3
+000135                                     TO CRC-BUFFER-LEN
+000136
+000137             PERFORM SUB-9100-CALL-CRC32 THRU SUB-9100-EXIT
+000138
+000139             PERFORM SUB-9200-DISPLAY-HEX THRU SUB-9200-EXIT
+000140             .
+000141         SUB-2000-EXIT.
+000142             EXIT.
+GnuCOBOL 3.0-rc1.0      CRC32T.cob                                                    Sun Feb 09 10:37:12 2020  Page 0008
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000143        /
+000144         SUB-3000-SHUT-DOWN.
+000145        *-------------------
+000146
+000147             DISPLAY 'CRC32T   completed'
+000148             .
+000149         SUB-3000-EXIT.
+000150             EXIT.
+GnuCOBOL 3.0-rc1.0      CRC32T.cob                                                    Sun Feb 09 10:37:12 2020  Page 0009
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000151        /
+000152         SUB-9100-CALL-CRC32.
+000153        *----------------------
+000154
+000155             CALL W-CRC32-PROG    USING W-CRC32-PARAMETER
+000156             .
+000157         SUB-9100-EXIT.
+000158             EXIT.
+GnuCOBOL 3.0-rc1.0      CRC32T.cob                                                    Sun Feb 09 10:37:12 2020  Page 0010
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000159        /
+000160         SUB-9200-DISPLAY-HEX.
+000161        *---------------------
+000162
+000163             SET  HD-INPUT-PTR       TO ADDRESS OF CRC-CHECKSUM
+000164             MOVE LENGTH OF CRC-CHECKSUM
+000165                                     TO HD-INPUT-LEN
+000166             SET  HD-OUTPUT-PTR      TO ADDRESS OF W-HEX
+000167
+000168             CALL W-HEXDUMP-PROG  USING W-HEXDUMP-PARAMETER
+000169
+000170             DISPLAY 'Checksum of '''
+000171                     W-BUFFER
+000172                     ''' is X'''
+000173                     W-HEX
+000174                     ''''
+000175             .
+000176         SUB-9200-EXIT.
+000177             EXIT.
+GnuCOBOL 3.0-rc1.0      CRC32T.cob                                                    Sun Feb 09 10:37:12 2020  Page 0011
+
+SIZE  TYPE           LVL  NAME                           PICTURE
+
+      WORKING-STORAGE SECTION
+
+00008 ALPHANUMERIC   01   W-CRC32-PROG                   X(08)
+
+00008 ALPHANUMERIC   01   W-HEXDUMP-PROG                 X(08)
+
+00008 ALPHANUMERIC   01   W-HEX                          X(08)
+
+00043 GROUP          01   W-BUFFER
+00020 ALPHANUMERIC   05   W-BUFFER-1                     X(20)
+00020 ALPHANUMERIC   05   W-BUFFER-2                     X(20)
+00003 ALPHANUMERIC   05   W-BUFFER-3                     X(03)
+
+00021 GROUP          01   W-COMPILED-DATE
+00004 ALPHANUMERIC   05   W-COMPILED-DATE-YYYY           X(04)
+00002 ALPHANUMERIC   05   W-COMPILED-DATE-MM             X(02)
+00002 ALPHANUMERIC   05   W-COMPILED-DATE-DD             X(02)
+00002 ALPHANUMERIC   05   W-COMPILED-TIME-HH             X(02)
+00002 ALPHANUMERIC   05   W-COMPILED-TIME-MM             X(02)
+00002 ALPHANUMERIC   05   W-COMPILED-TIME-SS             X(02)
+00007 ALPHANUMERIC   05   FILLER                         X(07)
+
+00018 GROUP          01   W-CRC32-PARAMETER
+00002 ALPHANUMERIC   05   CRC-STAGE                      X(02)
+      CONDITIONAL    88   CRC-STAGE-START-END
+      CONDITIONAL    88   CRC-STAGE-START
+      CONDITIONAL    88   CRC-STAGE-IN-PROCESS
+      CONDITIONAL    88   CRC-STAGE-END
+00008 POINTER        05   CRC-BUFFER-PTR
+00004 NUMERIC        05   CRC-BUFFER-LEN                 9(09) COMP
+00004 NUMERIC        05   CRC-CHECKSUM                   9(09) COMP
+
+00020 GROUP          01   W-HEXDUMP-PARAMETER
+00008 POINTER        05   HD-INPUT-PTR
+00004 NUMERIC        05   HD-INPUT-LEN                   9(09) COMP
+00008 POINTER        05   HD-OUTPUT-PTR
+
+
+GnuCOBOL 3.0-rc1.0      CRC32T.cob                                                    Sun Feb 09 10:37:12 2020  Page 0012
+
+Error/Warning summary:
+
+E:/Users/Brian D Pead/Documents/GnuCOBOL Projects/GC-Utilities/CopyBooks/CRC32L.CPY:40: warning: line not terminated by a newline
+CRC32T.cob:14: warning: PROCESS statement ignored
+
+2 warnings in compilation group
+0 errors in compilation group

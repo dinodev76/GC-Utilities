@@ -1,0 +1,382 @@
+GnuCOBOL 3.0-rc1.0      BITWISET.cob                                                  Sun Feb 09 10:37:03 2020  Page 0001
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000001        *=========================== BITWISET ===========================*
+000002        * Authors: Brian D Pead
+000003        *
+000004        * Description: Program to test subroutine BITWISE.
+000005        *
+000006        * License: MIT
+000007        *
+000008        * Date        Version  Description
+000009        * ----        -------  -----------
+000010        * 2020-02-08  1.0      First release
+000011        *================================================================*
+000012
+000013         PROCESS TRUNC(BIN)
+000014
+warning: PROCESS statement ignored
+000015         IDENTIFICATION DIVISION.
+000016        *========================
+000017
+000018         PROGRAM-ID.                 BITWISET.
+000019
+000020         ENVIRONMENT DIVISION.
+000021        *=====================
+000022
+000023         CONFIGURATION SECTION.
+000024        *----------------------
+000025
+000026         SOURCE-COMPUTER.
+000027             IBM-Z15.
+000028        *    IBM-Z15 DEBUGGING MODE.
+000029
+000030         INPUT-OUTPUT SECTION.
+000031        *---------------------
+000032
+000033         FILE-CONTROL.
+GnuCOBOL 3.0-rc1.0      BITWISET.cob                                                  Sun Feb 09 10:37:03 2020  Page 0002
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000034        /
+000035         DATA DIVISION.
+000036        *==============
+000037
+000038         FILE SECTION.
+000039        *-------------
+000040
+GnuCOBOL 3.0-rc1.0      BITWISET.cob                                                  Sun Feb 09 10:37:03 2020  Page 0003
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000041        /
+000042         WORKING-STORAGE SECTION.
+000043        *------------------------
+000044
+000045         01  W-INPUT-1-CHARS.
+000046             05  W-INPUT-1           PIC 9(09)  COMP.
+000047
+000048         01  W-INPUT-2-CHARS.
+000049             05  W-INPUT-2           PIC 9(09)  COMP.
+000050
+000051         01  W-OUTPUT                PIC 9(09)  COMP.
+000052         01  W-BITWISE-PROG          PIC X(08)       VALUE 'BITWISE'.
+000053         01  W-HEXDUMP-PROG          PIC X(08)       VALUE 'HEXDUMP'.
+000054         01  W-HEX-1                 PIC X(08).
+000055         01  W-HEX-2                 PIC X(08).
+000056         01  W-HEX-3                 PIC X(08).
+000057
+000058         01  W-OPERATIONS.
+000059             05  FILLER              PIC X(05)       VALUE ' AND '.
+000060             05  FILLER              PIC X(05)       VALUE ' OR  '.
+000061             05  FILLER              PIC X(05)       VALUE ' XOR '.
+000062         01  FILLER REDEFINES W-OPERATIONS.
+000063             05  W-OPERATION         PIC X(05)       OCCURS 3.
+000064
+000065         01  W-COMPILED-DATE.
+000066             05  W-COMPILED-DATE-YYYY
+000067                                     PIC X(04).
+000068             05  W-COMPILED-DATE-MM  PIC X(02).
+000069             05  W-COMPILED-DATE-DD  PIC X(02).
+000070             05  W-COMPILED-TIME-HH  PIC X(02).
+000071             05  W-COMPILED-TIME-MM  PIC X(02).
+000072             05  W-COMPILED-TIME-SS  PIC X(02).
+000073             05  FILLER              PIC X(07).
+000074
+000075         01  W-BITWISE-PARAMETER.    COPY BITWISEL.
+000001C       *========================= BITWISEL.cpy =========================*
+000002C       * Authors: Brian D Pead
+000003C       *
+000004C       * Description: Linkage parameter for subroutine BITWISE which
+000005C       *              performs the requested bitwise operation.
+000006C       *
+000007C       * License: MIT
+000008C       *
+000009C       * Date        Version  Description
+000010C       * ----        -------  -----------
+000011C       * 2020-02-08  1.0      First release
+000012C       *================================================================*
+000013C
+000014C       *01  BITWISE-PARAMETER.
+000015C
+000016C       **** Input fields:
+000017C       ****     BW-OPERATION:
+GnuCOBOL 3.0-rc1.0      BITWISET.cob                                                  Sun Feb 09 10:37:03 2020  Page 0004
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000018C       ****         Operation to perform.
+000019C       ****     BW-INPUT-1-PTR:
+000020C       ****         Pointer to first input.
+000021C       ****     BW-INPUT-2-PTR:
+000022C       ****         Pointer to second input.
+000023C       ****     BW-INPUT-LEN:
+000024C       ****         Length of inputs (output length is the same).
+000025C       ****     BW-OUTPUT-PTR:
+000026C       ****         Pointer to output.
+000027C
+000028C       **** Output field:
+000029C       ****     The area pointed to by BW-OUTPUT-PTR.
+000030C
+000031C            05  BW-OPERATION        PIC S9(04) COMP.
+000032C                88  BW-OPERATION-AND                VALUE 1.
+000033C                88  BW-OPERATION-OR                 VALUE 2.
+000034C                88  BW-OPERATION-XOR                VALUE 3.
+000035C
+000036C            05  BW-INPUT-1-PTR                      POINTER.
+000037C
+000038C            05  BW-INPUT-2-PTR                      POINTER.
+000039C
+000040C            05  BW-INPUT-LEN        PIC 9(09)  COMP.
+000041C
+000042C            05  BW-OUTPUT-PTR                       POINTER.
+000076
+000077         01  W-HEXDUMP-PARAMETER.    COPY HEXDUMPL.
+000001C       *========================= HEXDUMPL.cpy =========================*
+000002C       * Authors: Brian D Pead
+000003C       *
+000004C       * Description: Linkage parameter for subroutine HEXDUMP which
+000005C       *              convert input buffer to hex output.
+000006C       *
+000007C       * License: MIT
+000008C       *
+000009C       * Date        Version  Description
+000010C       * ----        -------  -----------
+000011C       * 2020-02-08  1.0      First release
+000012C       *================================================================*
+000013C
+000014C       *01  HEXDUMP-PARAMETER.
+000015C
+000016C       **** Input fields:
+000017C       ****     HD-INPUT-PTR:
+000018C       ****         Pointer to input.
+000019C       ****     HD-INPUT-LEN:
+000020C       ****         Length of input.
+000021C       ****     HD-OUTPUT-PTR:
+000022C       ****         Pointer to output (area must be twice the length of
+000023C       ****         the input).
+000024C
+000025C       **** Output field:
+GnuCOBOL 3.0-rc1.0      BITWISET.cob                                                  Sun Feb 09 10:37:03 2020  Page 0005
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000026C       ****     The area pointed to by HD-OUTPUT-PTR.
+000027C
+000028C            05  HD-INPUT-PTR                        POINTER.
+000029C
+000030C            05  HD-INPUT-LEN        PIC 9(09)  COMP.
+000031C
+000032C            05  HD-OUTPUT-PTR                       POINTER.
+GnuCOBOL 3.0-rc1.0      BITWISET.cob                                                  Sun Feb 09 10:37:03 2020  Page 0006
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000078        /
+000079         PROCEDURE DIVISION.
+000080        *===================
+000081
+000082         MAIN.
+000083        *-----
+000084
+000085             PERFORM SUB-1000-START-UP THRU SUB-1000-EXIT
+000086
+000087             PERFORM SUB-2000-PROCESS THRU SUB-2000-EXIT
+000088
+000089             PERFORM SUB-3000-SHUT-DOWN THRU SUB-3000-EXIT
+000090             .
+000091         MAIN-EXIT.
+000092             STOP RUN.
+GnuCOBOL 3.0-rc1.0      BITWISET.cob                                                  Sun Feb 09 10:37:03 2020  Page 0007
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000093        /
+000094         SUB-1000-START-UP.
+000095        *------------------
+000096
+000097             MOVE FUNCTION WHEN-COMPILED
+000098                                     TO W-COMPILED-DATE
+000099
+000100             DISPLAY 'BITWISET compiled on '
+000101                 W-COMPILED-DATE-YYYY '/'
+000102                 W-COMPILED-DATE-MM   '/'
+000103                 W-COMPILED-DATE-DD   ' at '
+000104                 W-COMPILED-TIME-HH   ':'
+000105                 W-COMPILED-TIME-MM   ':'
+000106                 W-COMPILED-TIME-SS
+000107             .
+000108         SUB-1000-EXIT.
+000109             EXIT.
+GnuCOBOL 3.0-rc1.0      BITWISET.cob                                                  Sun Feb 09 10:37:03 2020  Page 0008
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000110        /
+000111         SUB-2000-PROCESS.
+000112        *-----------------
+000113
+000114             MOVE 1                  TO W-INPUT-1
+000115             MOVE 2                  TO W-INPUT-2
+000116             SET  BW-OPERATION-AND   TO TRUE
+000117
+000118             PERFORM SUB-9100-CALL-BITWISE THRU SUB-9100-EXIT
+000119
+000120             SET  BW-OPERATION-OR    TO TRUE
+000121
+000122             PERFORM SUB-9100-CALL-BITWISE THRU SUB-9100-EXIT
+000123
+000124             MOVE 2808555105         TO W-INPUT-1
+000125             MOVE 3                  TO W-INPUT-2
+000126             SET  BW-OPERATION-OR    TO TRUE
+000127
+000128             PERFORM SUB-9100-CALL-BITWISE THRU SUB-9100-EXIT
+000129
+000130             SET  BW-OPERATION-XOR   TO TRUE
+000131
+000132             PERFORM SUB-9100-CALL-BITWISE THRU SUB-9100-EXIT
+000133
+000134             MOVE 255                TO W-INPUT-1
+000135             MOVE X'FFFFFFFF'        TO W-INPUT-2-CHARS
+000136
+000137             PERFORM SUB-9100-CALL-BITWISE THRU SUB-9100-EXIT
+000138             .
+000139         SUB-2000-EXIT.
+000140             EXIT.
+GnuCOBOL 3.0-rc1.0      BITWISET.cob                                                  Sun Feb 09 10:37:03 2020  Page 0009
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000141        /
+000142         SUB-3000-SHUT-DOWN.
+000143        *-------------------
+000144
+000145             DISPLAY 'BITWISET completed'
+000146             .
+000147         SUB-3000-EXIT.
+000148             EXIT.
+GnuCOBOL 3.0-rc1.0      BITWISET.cob                                                  Sun Feb 09 10:37:03 2020  Page 0010
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000149        /
+000150         SUB-9100-CALL-BITWISE.
+000151        *----------------------
+000152
+000153             SET  BW-INPUT-1-PTR     TO ADDRESS OF W-INPUT-1
+000154             SET  BW-INPUT-2-PTR     TO ADDRESS OF W-INPUT-2
+000155             MOVE LENGTH OF W-INPUT-1
+000156                                     TO BW-INPUT-LEN
+000157             SET  BW-OUTPUT-PTR      TO ADDRESS OF W-OUTPUT
+000158
+000159             CALL W-BITWISE-PROG  USING W-BITWISE-PARAMETER
+000160
+000161             PERFORM SUB-9110-DISPLAY THRU SUB-9110-EXIT
+000162             .
+000163         SUB-9100-EXIT.
+000164             EXIT.
+GnuCOBOL 3.0-rc1.0      BITWISET.cob                                                  Sun Feb 09 10:37:03 2020  Page 0011
+
+LINE    PG/LN  A...B............................................................SEQUENCE
+
+000165        /
+000166         SUB-9110-DISPLAY.
+000167        *-----------------
+000168
+000169             SET  HD-INPUT-PTR       TO ADDRESS OF W-INPUT-1
+000170             MOVE LENGTH OF W-INPUT-1
+000171                                     TO HD-INPUT-LEN
+000172             SET  HD-OUTPUT-PTR      TO ADDRESS OF W-HEX-1
+000173
+000174             CALL W-HEXDUMP-PROG  USING W-HEXDUMP-PARAMETER
+000175
+000176             SET  HD-INPUT-PTR       TO ADDRESS OF W-INPUT-2
+000177             MOVE LENGTH OF W-INPUT-2
+000178                                     TO HD-INPUT-LEN
+000179             SET  HD-OUTPUT-PTR      TO ADDRESS OF W-HEX-2
+000180
+000181             CALL W-HEXDUMP-PROG  USING W-HEXDUMP-PARAMETER
+000182
+000183             SET  HD-INPUT-PTR       TO ADDRESS OF W-OUTPUT
+000184             MOVE LENGTH OF W-OUTPUT TO HD-INPUT-LEN
+000185             SET  HD-OUTPUT-PTR      TO ADDRESS OF W-HEX-3
+000186
+000187             CALL W-HEXDUMP-PROG  USING W-HEXDUMP-PARAMETER
+000188
+000189             DISPLAY 'X'''
+000190                     W-HEX-1
+000191                     ''''
+000192                     W-OPERATION(BW-OPERATION)
+000193                     'X'''
+000194                     W-HEX-2
+000195                     ''' = X'''
+000196                     W-HEX-3
+000197                     ''''
+000198             .
+000199         SUB-9110-EXIT.
+000200             EXIT.
+GnuCOBOL 3.0-rc1.0      BITWISET.cob                                                  Sun Feb 09 10:37:03 2020  Page 0012
+
+SIZE  TYPE           LVL  NAME                           PICTURE
+
+      WORKING-STORAGE SECTION
+
+00004 GROUP          01   W-INPUT-1-CHARS
+00004 NUMERIC        05   W-INPUT-1                      9(09) COMP
+
+00004 GROUP          01   W-INPUT-2-CHARS
+00004 NUMERIC        05   W-INPUT-2                      9(09) COMP
+
+00004 NUMERIC        01   W-OUTPUT                       9(09) COMP
+
+00008 ALPHANUMERIC   01   W-BITWISE-PROG                 X(08)
+
+00008 ALPHANUMERIC   01   W-HEXDUMP-PROG                 X(08)
+
+00008 ALPHANUMERIC   01   W-HEX-1                        X(08)
+
+00008 ALPHANUMERIC   01   W-HEX-2                        X(08)
+
+00008 ALPHANUMERIC   01   W-HEX-3                        X(08)
+
+00015 GROUP          01   W-OPERATIONS
+00005 ALPHANUMERIC   05   FILLER                         X(05)
+00005 ALPHANUMERIC   05   FILLER                         X(05)
+00005 ALPHANUMERIC   05   FILLER                         X(05)
+
+00015 GROUP          01   FILLER, REDEFINES W-OPERATIONS
+00005 ALPHANUMERIC   05   W-OPERATION                    X(05), OCCURS 3
+
+00021 GROUP          01   W-COMPILED-DATE
+00004 ALPHANUMERIC   05   W-COMPILED-DATE-YYYY           X(04)
+00002 ALPHANUMERIC   05   W-COMPILED-DATE-MM             X(02)
+00002 ALPHANUMERIC   05   W-COMPILED-DATE-DD             X(02)
+00002 ALPHANUMERIC   05   W-COMPILED-TIME-HH             X(02)
+00002 ALPHANUMERIC   05   W-COMPILED-TIME-MM             X(02)
+00002 ALPHANUMERIC   05   W-COMPILED-TIME-SS             X(02)
+00007 ALPHANUMERIC   05   FILLER                         X(07)
+
+00030 GROUP          01   W-BITWISE-PARAMETER
+00002 NUMERIC        05   BW-OPERATION                   S9(04) COMP
+      CONDITIONAL    88   BW-OPERATION-AND
+      CONDITIONAL    88   BW-OPERATION-OR
+      CONDITIONAL    88   BW-OPERATION-XOR
+00008 POINTER        05   BW-INPUT-1-PTR
+00008 POINTER        05   BW-INPUT-2-PTR
+00004 NUMERIC        05   BW-INPUT-LEN                   9(09) COMP
+00008 POINTER        05   BW-OUTPUT-PTR
+
+00020 GROUP          01   W-HEXDUMP-PARAMETER
+00008 POINTER        05   HD-INPUT-PTR
+00004 NUMERIC        05   HD-INPUT-LEN                   9(09) COMP
+00008 POINTER        05   HD-OUTPUT-PTR
+GnuCOBOL 3.0-rc1.0      BITWISET.cob                                                  Sun Feb 09 10:37:03 2020  Page 0013
+
+Error/Warning summary:
+
+BITWISET.cob:14: warning: PROCESS statement ignored
+
+1 warning in compilation group
+0 errors in compilation group
